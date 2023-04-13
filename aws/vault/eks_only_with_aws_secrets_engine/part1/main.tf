@@ -1,11 +1,7 @@
-provider "aws" {
-  region   = var.vpc_region
-}
-
 module "hcp-eks" {
   source  = "stoffee/vault-eks/hcp"
   version = "~> 0.0.13"
-  #source               = "../../../../../terraform-module-development/terraform-hcp-vault-eks/"
+  #source               = "/Users/stoffee/git/terraform-module-development/terraform-hcp-vault-eks"
   cluster_id           = var.cluster_id
   deploy_hvn           = var.deploy_hvn
   hvn_id               = var.hvn_id
@@ -18,5 +14,3 @@ module "hcp-eks" {
   eks_instance_types  = ["t2.small"]
   eks_cluster_version = "1.25"
 }
-
-
