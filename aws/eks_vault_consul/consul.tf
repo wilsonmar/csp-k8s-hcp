@@ -23,13 +23,53 @@ resource "hcp_consul_cluster" "main" {
 #  hvn_id             = hcp_hvn.main.hvn_id
   public_endpoint    = true
   tier               = var.consul_tier
-  min_consul_version = "v1.14.0"
+  min_consul_version = "v1.15.2"
 }
 
 resource "hcp_consul_cluster_root_token" "token" {
   cluster_id = hcp_consul_cluster.main.id
 }
 
+resource "helm_release" "consul" {
+  #depends_on = [kubernetes_namespace.secrets]
+  name       = "${var.release_name}-consul"
+  repository = "https://helm.releases.hashicorp.com"
+  chart      = "consul"
+  namespace  = var.namespace
+
+  set {
+    name  = "global.name"
+    value = "consul"
+  }
+
+  set {
+    name  = "server.replicas"
+    value = var.replicas
+  }
+
+  set {
+    name  = "server.bootstrapExpect"
+    value = var.replicas
+  }
+}
+
+/*
+resource "kubernetes_namespace" "secrets" {
+  metadata {
+    annotations = {
+      name = var.namespace
+    }
+
+    labels = {
+      purpose = "consul"
+    }
+
+    name = var.namespace
+  }
+}
+*/
+
+/*
 module "eks_consul_client" {
   source  = "hashicorp/hcp-consul/aws//modules/hcp-eks-client"
   version = "~> 0.12.1"
@@ -38,6 +78,7 @@ module "eks_consul_client" {
   cluster_id         = hcp_consul_cluster.main.cluster_id
   # strip out url scheme from the public url
   consul_hosts     = tolist([substr(hcp_consul_cluster.main.consul_public_endpoint_url, 8, -1)])
+  #consul_hosts     = hcp_consul_cluster.main.consul_public_endpoint_url
   consul_version   = hcp_consul_cluster.main.consul_version
   datacenter       = hcp_consul_cluster.main.datacenter
   k8s_api_endpoint = module.hcp-eks.eks_cluster_endpoint
@@ -47,3 +88,4 @@ module "eks_consul_client" {
   # the node group is successfully created.
   depends_on = [module.hcp-eks]
 }
+*/

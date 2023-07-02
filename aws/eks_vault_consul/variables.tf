@@ -88,3 +88,21 @@ variable "consul_tier" {
   description = "The HCP Consul tier to use when creating a Consul cluster"
   default     = "development"
 }
+
+variable "release_name" {
+  type        = string
+  default     = "hashicorp-consul"
+  description = "Helm Release name for Consul chart"
+}
+
+variable "namespace" {
+  type        = string
+  default     = "hashicorp-consul"
+  description = "Namespace to deploy the Consul Helm chart"
+}
+
+variable "replicas" {
+  type        = number
+  default     = 1
+  description = "Number of consul replicas"
+}
